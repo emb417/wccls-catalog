@@ -2,10 +2,11 @@ var AWS = require("aws-sdk");
 
 AWS.config.update({
   region: "us-west-2",
-  endpoint: "http://localhost:1338"
+  endpoint: "https://dynamodb.us-west-2.amazonaws.com"
 });
 //AWS.config.update({endpoint: "https://dynamodb.us-west-2.amazonaws.com"});
-var dynamodb = new AWS.DynamoDB();
+//arn:aws:dynamodb:us-west-2:627684009771:table/wccls-catalog-ps4-items
+//var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 // var params = {

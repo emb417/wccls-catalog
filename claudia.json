@@ -1,0 +1,7 @@
+{
+  "lambda": {
+    "role": "wccls-catalog-executor",
+    "name": "wccls-catalog",
+    "region": "us-west-2"
+  }
+}

@@ -1,12 +1,11 @@
-const request = require('request');
 const AWS = require('aws-sdk');
 AWS.config.update({
   region: 'us-west-2',
-  endpoint: 'http://localhost:1338'
+  endpoint: "https://dynamodb.us-west-2.amazonaws.com"
 });
 const docClient = new AWS.DynamoDB.DocumentClient();
-const cheerio = require('cheerio');
 
+const cheerio = require('cheerio');
 const getItems = ( response ) => {
   const $ = cheerio.load(response);
   const items = [];
@@ -30,31 +29,37 @@ const getItems = ( response ) => {
   return items;
 };
 
-const pageUrl = 'https://catalog.wccls.org/Mobile/Search/Results/?t=ps4&f=a&s=KW&l=TOM%3dvgm&o=MP&ls=1.500';
-request(pageUrl, ( error, response, body ) => {
-  // Print the error if one occurred
-  if( error ){ console.error(error); }
-  // Print the response status code if a response was received
-  if( response ){
 
-    console.log('statusCode:', response.statusCode);
+exports.handler = function (event, context) {
 
-    const allItems = getItems(body);
-      allItems.forEach( item => {
-        const params = {
-            TableName: 'wccls-catalog-ps4-items',
-            Item: {
-                'year':  item.year,
-                'title': item.title,
-                'itemId':  item.itemId
-            }
-        };
+  const request = require('request');
+  const pageUrl = 'https://catalog.wccls.org/Mobile/Search/Results/?t=ps4&f=a&s=KW&l=TOM%3dvgm&o=MP&ls=1.500';
+  request(pageUrl, ( error, response, body ) => {
+    // Print the error if one occurred
+    if( error ){ return error; }
+    // Print the response status code if a response was received
+    if( response ){
 
-        docClient.put(params, ( err, data ) => {
-            if (err) {
-                console.error(err);
-            }
-        });
-    });
-  }
-});
+      const allItems = getItems(body);
+        allItems.forEach( item => {
+          const params = {
+              TableName: 'wccls-catalog-ps4-items',
+              Item: {
+                  'year':  item.year,
+                  'title': item.title,
+                  'itemId':  item.itemId
+              }
+          };
+
+          docClient.put(params, ( err, data ) => {
+              if (err) {
+                  context.error(err);
+              }
+              else {
+                context.succeed('Success: ' + data);
+              }
+          });
+      });
+    }
+  });
+};
