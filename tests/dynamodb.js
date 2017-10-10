@@ -51,9 +51,9 @@ var params = {
         "#yr": "year"
     },
     ExpressionAttributeValues: {
-        ":yyyy":2016,
-        ":letter1": "A",
-        ":letter2": "L"
+        ":yyyy":2017,
+        ":letter1": "0",
+        ":letter2": "Z"
     }
 };
 docClient.query(params, function(err, data) {
