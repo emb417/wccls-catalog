@@ -1,9 +1,8 @@
 const AWS = require('aws-sdk');
-AWS.config.update({
+const docClient = new AWS.DynamoDB.DocumentClient({
   region: 'us-west-2',
   endpoint: "https://dynamodb.us-west-2.amazonaws.com"
 });
-const docClient = new AWS.DynamoDB.DocumentClient();
 
 const cheerio = require('cheerio');
 const getItems = ( response ) => {
@@ -30,7 +29,7 @@ const getItems = ( response ) => {
 };
 
 
-exports.handler = function (event, context) {
+exports.handler = function (event, context, callback) {
 
   const request = require('request');
   const pageUrl = 'https://catalog.wccls.org/Mobile/Search/Results/?t=ps4&f=a&s=KW&l=TOM%3dvgm&o=MP&ls=1.500';
@@ -53,10 +52,10 @@ exports.handler = function (event, context) {
 
           docClient.put(params, ( err, data ) => {
               if (err) {
-                  context.error(err);
+                  return callback(console.error(err));
               }
               else {
-                context.succeed('Success: ' + data);
+                return callback(console.info('Success: ' + data));
               }
           });
       });
