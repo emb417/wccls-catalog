@@ -42,20 +42,20 @@ exports.handler = function (event, context, callback) {
       const allItems = getItems(body);
         allItems.forEach( item => {
           const params = {
-              TableName: 'wccls-catalog-ps4-items',
-              Item: {
-                  'year':  item.year,
-                  'title': item.title,
-                  'itemId':  item.itemId
-              }
+            TableName: 'wccls-catalog-ps4-items',
+            Item: {
+              'year':  item.year,
+              'title': item.title,
+              'itemId':  item.itemId
+            }
           };
 
           docClient.put(params, ( err, data ) => {
               if (err) {
-                  return callback(console.error(err));
+                callback(console.error(err));
               }
               else {
-                return callback(console.info('Success: ' + data));
+                callback(console.info('Success: ' + data));
               }
           });
       });
